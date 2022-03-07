@@ -64,7 +64,14 @@ const Button = styled.button`
 `;
 
 const Equation = styled.h1`
-  font-size: 192px;
+  font-size: 160px;
+  display: flex;
+`;
+
+const Answer = styled.h1`
+  font-size: 160px;
+  margin-right: 32px;
+  color: ${(props) => props.color || "#313552"};
 `;
 
 const Result = styled.h1`
@@ -73,7 +80,7 @@ const Result = styled.h1`
 `;
 
 const Time = styled.h1`
-  width: 300px;
+  width: 360px;
   color: #313552;
   font-size: 64px;
   display: flex;
@@ -103,6 +110,7 @@ function App() {
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [answer, setAnswer] = useState("?");
+  const [color, setColor] = useState("#313552");
   const [correct, setCorrect] = useState(0);
   const [wrong, setWrong] = useState(0);
   const [ticking, setTicking] = useState(false);
@@ -120,11 +128,22 @@ function App() {
       setWrong(wrong + 1);
     }
 
+    setColor("#313552");
     newQuestion();
   };
 
-  const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
-    useSpeechRecognition();
+  const Question = () => {
+    return (
+      <>
+        <Equation>
+          {num1} + {num2} =
+        </Equation>
+        <Answer color={color}>{answer}</Answer>
+      </>
+    );
+  };
+
+  const { transcript, resetTranscript } = useSpeechRecognition();
 
   useEffect(() => {
     // resetTranscript should only be called after recognizing the next
@@ -147,6 +166,13 @@ function App() {
 
     if (!isNaN(i)) {
       setAnswer(i);
+
+      // set the color to give a hint to the answer
+      if (i === num1 + num2) {
+        setColor("green");
+      } else {
+        setColor("red");
+      }
     }
 
     if (next) {
@@ -175,17 +201,16 @@ function App() {
         <Left>
           <Title>Speed Math</Title>
         </Left>
+
         <Right>
           <Button color={ticking ? "black" : "grey"} onClick={onClick}>
             <FontAwesomeIcon icon={faMicrophoneLines} size="4x" />
           </Button>
         </Right>
       </TopBar>
-      <Middle>
-        <Equation>
-          {num1} + {num2} = {answer}
-        </Equation>
-      </Middle>
+
+      <Middle>{ticking ? <Question /> : <Equation>Ready?</Equation>}</Middle>
+
       <Bottom>
         <Result color="green">{correct}</Result>
         <Result color="red">{wrong}</Result>
