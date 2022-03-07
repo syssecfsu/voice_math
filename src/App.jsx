@@ -157,7 +157,7 @@ function App() {
     tokens.forEach((val) => {
       i = parseInt(val, 10) || i;
 
-      if (val === "next") {
+      if (val === "next" || val === "go") {
         next = true;
       }
     });
