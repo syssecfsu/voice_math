@@ -162,7 +162,7 @@ function App() {
       }
     });
 
-    console.log(i, next);
+    console.log(transcript);
 
     if (!isNaN(i)) {
       setAnswer(i);
