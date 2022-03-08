@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/voice_math/static/css/main.f664d7e3.css",
+    "main.js": "/voice_math/static/js/main.de5a46d5.js",
+    "index.html": "/voice_math/index.html",
+    "main.f664d7e3.css.map": "/voice_math/static/css/main.f664d7e3.css.map",
+    "main.de5a46d5.js.map": "/voice_math/static/js/main.de5a46d5.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f664d7e3.css",
+    "static/js/main.de5a46d5.js"
+  ]
+}
