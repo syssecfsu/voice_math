@@ -192,7 +192,7 @@ function App() {
       }
     });
 
-    if (!isNaN(i)) {
+    if (!isNaN(i) && answer !== num1 + num2) {
       setAnswer(i);
 
       // set the color to give a hint to the answer
@@ -206,7 +206,7 @@ function App() {
     if (next || pressedKey === "n" || pressedKey === " ") {
       nextQuestion();
     }
-  }, [transcript, pressedKey, ticking]);
+  }, [transcript, pressedKey, ticking, answer]);
 
   const onClick = () => {
     // switch listening
