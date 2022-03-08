@@ -106,14 +106,16 @@ const TimeComponent = (props) => {
 
 function App() {
   const MaxNum = 15;
+  const defaultColor = "#313552";
 
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [answer, setAnswer] = useState("?");
-  const [color, setColor] = useState("#313552");
+  const [color, setColor] = useState(defaultColor);
   const [correct, setCorrect] = useState(0);
   const [wrong, setWrong] = useState(0);
   const [ticking, setTicking] = useState(false);
+  const [pressedKey, setPressedKey] = useState("");
 
   const newQuestion = () => {
     setNum1(Math.ceil(Math.random() * MaxNum));
@@ -121,14 +123,22 @@ function App() {
     setAnswer("?");
   };
 
-  const nextQuestion = (input) => {
+  const nextQuestion = () => {
     if (answer === num1 + num2) {
       setCorrect(correct + 1);
     } else {
       setWrong(wrong + 1);
     }
 
-    setColor("#313552");
+    setColor(defaultColor);
+    resetTranscript();
+    setPressedKey("");
+    newQuestion();
+  };
+
+  const newPractice = () => {
+    setCorrect(0);
+    setWrong(0);
     newQuestion();
   };
 
@@ -146,9 +156,29 @@ function App() {
   const { transcript, resetTranscript } = useSpeechRecognition();
 
   useEffect(() => {
+    const onKeyDown = (e) => {
+      setPressedKey(e.key);
+    };
+
+    // add event listener
+    window.addEventListener("keydown", onKeyDown);
+
+    // Remove event listeners on cleanup
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!ticking) {
+      return;
+    }
+
     // resetTranscript should only be called after recognizing the next
     // command otherwise the speech recognition won't work properly.
     // As such, we just find the last number in the sequence as answer.
+    console.log(transcript);
+
     const tokens = transcript.split(" ");
 
     let i = NaN;
@@ -157,12 +187,10 @@ function App() {
     tokens.forEach((val) => {
       i = parseInt(val, 10) || i;
 
-      if (val === "next" || val === "go") {
+      if (val === "next") {
         next = true;
       }
     });
-
-    console.log(transcript);
 
     if (!isNaN(i)) {
       setAnswer(i);
@@ -175,11 +203,10 @@ function App() {
       }
     }
 
-    if (next) {
+    if (next || pressedKey === "n" || pressedKey === " ") {
       nextQuestion();
-      resetTranscript();
     }
-  }, [transcript]);
+  }, [transcript, pressedKey, ticking]);
 
   const onClick = () => {
     // switch listening
@@ -187,9 +214,7 @@ function App() {
       SpeechRecognition.stopListening();
     } else {
       SpeechRecognition.startListening({ continuous: true });
-      setCorrect(0);
-      setWrong(0);
-      newQuestion();
+      newPractice();
     }
 
     setTicking(!ticking);
@@ -203,7 +228,11 @@ function App() {
         </Left>
 
         <Right>
-          <Button color={ticking ? "black" : "grey"} onClick={onClick}>
+          <Button
+            color={ticking ? "black" : "grey"}
+            onClick={onClick}
+            onKeyDown={(e) => e.preventDefault()}
+          >
             <FontAwesomeIcon icon={faMicrophoneLines} size="4x" />
           </Button>
         </Right>
