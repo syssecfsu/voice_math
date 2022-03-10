@@ -76,6 +76,12 @@ const TimeComponent = (props) => {
     return <Time color="black">Time: {elapsedTime}</Time>;
 };
 
+function randInt(min, max) {
+    var stepSize = 1 / (max - min + 1),
+        nSteps = Math.floor(Math.random() / stepSize);
+    return min + nSteps;
+}
+
 function Main() {
     const [max, setMax] = useState(10);
     const [num1, setNum1] = useState(0);
@@ -91,11 +97,11 @@ function Main() {
     let navigate = useNavigate();
 
     const newQuestion = () => {
-        let n1 = Math.ceil(Math.random() * max);
-        let n2 = Math.ceil(Math.random() * max);
+        let n1 = randInt(1, max);
+        let n2 = randInt(1, max);
 
         // randomly pick an op
-        const idx = Math.floor(Math.random() * ops.length);
+        const idx = randInt(0, ops.length - 1);
         const p = ops[idx] || "+";
 
         // avoid negative results
