@@ -40,4 +40,10 @@ export const Button = styled.button`
 	cursor: pointer;
 `;
 
+export const defaultSetting = {
+	add: true,
+	sub: false,
+	mul: false,
+	max: 15,
+};
 export const primaryColor = "#313552";

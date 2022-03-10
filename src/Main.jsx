@@ -14,7 +14,9 @@ import {
 	Button,
 	Title,
 	primaryColor,
+	defaultSetting,
 } from "./Components";
+import { useNavigate } from "react-router-dom";
 
 const Middle = styled.div`
 	color: #313552;
@@ -75,31 +77,49 @@ const TimeComponent = (props) => {
 };
 
 function Main() {
-	const MaxNum = 15;
-	let setting = {
-		add: true,
-		sub: false,
-		mul: false,
-		num: 15,
-	};
-
+	const [max, setMax] = useState(10);
 	const [num1, setNum1] = useState(0);
 	const [num2, setNum2] = useState(0);
+	const [ops, setOps] = useState([]);
+	const [op, setOp] = useState("+");
 	const [answer, setAnswer] = useState("?");
 	const [color, setColor] = useState(primaryColor);
 	const [correct, setCorrect] = useState(0);
 	const [wrong, setWrong] = useState(0);
 	const [ticking, setTicking] = useState(false);
 	const [pressedKey, setPressedKey] = useState("");
+	let navigate = useNavigate();
 
 	const newQuestion = () => {
-		setNum1(Math.ceil(Math.random() * MaxNum));
-		setNum2(Math.ceil(Math.random() * MaxNum));
+		let n1 = Math.ceil(Math.random() * max);
+		let n2 = Math.ceil(Math.random() * max);
+
+		// randomly pick an op
+		const idx = Math.floor(Math.random() * ops.length);
+		const p = ops[idx] || "+";
+
+		// avoid negative results
+		if (p === "-" && n1 < n2) {
+			setNum1(n2);
+			setNum2(n1);
+		} else {
+			setNum1(n1);
+			setNum2(n2);
+		}
+		setOp(p);
 		setAnswer("?");
 	};
 
+	const isCorrect = (i) => {
+		return (
+			(op === "+" && i === num1 + num2) ||
+			(op === "-" && i === num1 - num2) ||
+			(op === "x" && i === num1 - num2)
+		);
+	};
+
 	const nextQuestion = () => {
-		if (answer === num1 + num2) {
+		if (isCorrect(answer)) {
 			setCorrect(correct + 1);
 		} else {
 			setWrong(wrong + 1);
@@ -111,17 +131,27 @@ function Main() {
 		newQuestion();
 	};
 
+	const readSetting = () => {
+		const saved = localStorage.getItem("setting");
+		let setting = JSON.parse(saved) || defaultSetting;
+
+		let a = [];
+		setting.add && a.push("+");
+		setting.sub && a.push("-");
+		setting.mul && a.push("x");
+		a.length === 0 && a.push("+");
+
+		setOps(a);
+		setMax(setting.max);
+	};
+
 	const newPractice = () => {
 		setCorrect(0);
 		setWrong(0);
 		setColor(primaryColor);
 		resetTranscript();
 		setPressedKey("");
-
-		const saved = localStorage.getItem("setting");
-		setting = JSON.parse(saved) || setting;
-		console.log(setting);
-
+		readSetting();
 		newQuestion();
 	};
 
@@ -129,7 +159,7 @@ function Main() {
 		return (
 			<>
 				<Equation>
-					{num1} + {num2} =
+					{num1} {op} {num2} =
 				</Equation>
 				<Answer color={color}>{answer}</Answer>
 			</>
@@ -175,11 +205,11 @@ function Main() {
 			}
 		});
 
-		if (!isNaN(i) && answer !== num1 + num2) {
+		if (!isNaN(i) && !isCorrect(answer)) {
 			setAnswer(i);
 
 			// set the color to give a hint to the answer
-			if (i === num1 + num2) {
+			if (isCorrect(i)) {
 				setColor("green");
 			} else {
 				setColor("red");
@@ -189,7 +219,7 @@ function Main() {
 		if (next || pressedKey === "n" || pressedKey === " ") {
 			nextQuestion();
 		}
-	}, [transcript, pressedKey, ticking, answer]);
+	}, [transcript, pressedKey, ticking]);
 
 	const onClick = () => {
 		// switch listening
@@ -204,7 +234,7 @@ function Main() {
 	};
 
 	const onClickSetting = () => {
-		console.log("open settings page");
+		navigate("/settings");
 	};
 
 	return (

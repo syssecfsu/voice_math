@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
 	Container,
@@ -8,9 +8,11 @@ import {
 	Button,
 	Title,
 	primaryColor,
+	defaultSetting,
 } from "./Components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const SettingArea = styled.div`
 	color: #313552;
@@ -47,7 +49,6 @@ const InputContainer = styled.div`
 
 const Input = styled.input.attrs({
 	type: "text",
-	placeholder: "10",
 })`
 	font-size: 32px;
 	font-weight: 700;
@@ -69,27 +70,39 @@ const Bottom = styled.div`
 `;
 
 function Settings() {
-	const numInput = useRef(null);
+	let navigate = useNavigate();
+	const maxInput = useRef(null);
 	const [add, setAdd] = useState(true);
 	const [sub, setSub] = useState(false);
 	const [mul, setMul] = useState(false);
-	const [num, setNum] = useState(10);
+	const [max, setMax] = useState(10);
+
+	useEffect(() => {
+		const saved = localStorage.getItem("setting");
+		let setting = JSON.parse(saved) || defaultSetting;
+		setAdd(setting.add);
+		setSub(setting.sub);
+		setMul(setting.mul);
+		setMax(setting.max);
+		maxInput.current.value = setting.max;
+	}, []);
 
 	const onSave = (e) => {
 		const setting = {
 			add,
 			sub,
 			mul,
-			num,
+			max,
 		};
 
 		localStorage.setItem("setting", JSON.stringify(setting));
+		navigate("/");
 	};
 
-	const getNum = () => {
-		const n = parseInt(numInput.current.value, 10);
+	const getMax = () => {
+		const n = parseInt(maxInput.current.value, 10);
 		if (!isNaN(n) && n >= 5 && n < 100) {
-			setNum(n);
+			setMax(n);
 		}
 	};
 
@@ -132,14 +145,15 @@ function Settings() {
 					</Operators>
 					<InputContainer>
 						<Label>Max number:</Label>
-						<Input ref={numInput} onChange={getNum} />
+						<Input ref={maxInput} onChange={getMax} />
 					</InputContainer>
 				</Top>
 				<Bottom>
+					<Label> Setting:</Label>
 					<Label> {add ? "+" : ""}</Label>
 					<Label> {sub ? "-" : ""}</Label>
 					<Label> {mul ? "x" : ""}</Label>
-					<Label> {num}</Label>
+					<Label> {max}</Label>
 				</Bottom>
 			</SettingArea>
 		</Container>
