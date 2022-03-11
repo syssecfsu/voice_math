@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/voice_math/static/css/main.f664d7e3.css",
-    "main.js": "/voice_math/static/js/main.ed7dd0ba.js",
+    "main.js": "/voice_math/static/js/main.be36c8c1.js",
     "index.html": "/voice_math/index.html",
     "main.f664d7e3.css.map": "/voice_math/static/css/main.f664d7e3.css.map",
-    "main.ed7dd0ba.js.map": "/voice_math/static/js/main.ed7dd0ba.js.map"
+    "main.be36c8c1.js.map": "/voice_math/static/js/main.be36c8c1.js.map"
   },
   "entrypoints": [
     "static/css/main.f664d7e3.css",
-    "static/js/main.ed7dd0ba.js"
+    "static/js/main.be36c8c1.js"
   ]
 }
