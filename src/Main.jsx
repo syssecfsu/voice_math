@@ -73,7 +73,7 @@ const TimeComponent = (props) => {
 		}
 	}, [ticking, reset]);
 
-	return <Time color="black">Time: {elapsedTime}</Time>;
+	return <Time>Time: {elapsedTime}</Time>;
 };
 
 function randInt(min, max) {
