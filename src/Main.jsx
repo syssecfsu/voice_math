@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMicrophoneLines, faGear } from "@fortawesome/free-solid-svg-icons";
+import { faMicrophone, faGear } from "@fortawesome/free-solid-svg-icons";
 import SpeechRecognition, {
 	useSpeechRecognition,
 } from "react-speech-recognition";
@@ -84,6 +84,7 @@ function randInt(min, max) {
 
 function Main() {
 	const [max, setMax] = useState(10);
+	const [min, setMin] = useState(1);
 	const [num1, setNum1] = useState(0);
 	const [num2, setNum2] = useState(0);
 	const [ops, setOps] = useState([]);
@@ -97,8 +98,8 @@ function Main() {
 	let navigate = useNavigate();
 
 	const newQuestion = () => {
-		let n1 = randInt(1, max);
-		let n2 = randInt(1, max);
+		let n1 = randInt(min, max);
+		let n2 = randInt(min, max);
 
 		// randomly pick an op
 		const idx = randInt(0, ops.length - 1);
@@ -120,7 +121,7 @@ function Main() {
 		return (
 			(op === "+" && i === num1 + num2) ||
 			(op === "-" && i === num1 - num2) ||
-			(op === "x" && i === num1 * num2)
+			(op === "×" && i === num1 * num2)
 		);
 	};
 
@@ -144,11 +145,12 @@ function Main() {
 		let a = [];
 		setting.add && a.push("+");
 		setting.sub && a.push("-");
-		setting.mul && a.push("x");
+		setting.mul && a.push("×");
 		a.length === 0 && a.push("+");
 
 		setOps(a);
 		setMax(setting.max);
+		setMin(setting.min);
 	};
 
 	const newPractice = () => {
@@ -257,7 +259,7 @@ function Main() {
 						onClick={onClick}
 						onKeyDown={(e) => e.preventDefault()}
 					>
-						<FontAwesomeIcon icon={faMicrophoneLines} size="4x" />
+						<FontAwesomeIcon icon={faMicrophone} size="4x" />
 					</Button>
 
 					<Button

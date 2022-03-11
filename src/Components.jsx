@@ -44,6 +44,7 @@ export const defaultSetting = {
 	add: true,
 	sub: false,
 	mul: false,
-	max: 15,
+	max: 9,
+	min: 1,
 };
 export const primaryColor = "#313552";

@@ -31,7 +31,7 @@ const Operators = styled.ul`
 const Label = styled.h1`
 	font-size: 32px;
 	color: ${(props) => props.color || primaryColor};
-	margin-right: 24px;
+	margin: 12px;
 `;
 
 const Operator = (props) => {
@@ -55,6 +55,10 @@ const Input = styled.input.attrs({
 	width: 40%;
 	border: 0px;
 	background-color: #f2f5c8;
+	border-radius: 8px;
+	&:focus {
+		outline: none;
+	}
 `;
 
 const Top = styled.div`
@@ -72,10 +76,12 @@ const Bottom = styled.div`
 function Settings() {
 	let navigate = useNavigate();
 	const maxInput = useRef(null);
+	const minInput = useRef(null);
 	const [add, setAdd] = useState(true);
 	const [sub, setSub] = useState(false);
 	const [mul, setMul] = useState(false);
 	const [max, setMax] = useState(10);
+	const [min, setMin] = useState(1);
 
 	useEffect(() => {
 		const saved = localStorage.getItem("setting");
@@ -84,7 +90,9 @@ function Settings() {
 		setSub(setting.sub);
 		setMul(setting.mul);
 		setMax(setting.max);
+		setMin(setting.min);
 		maxInput.current.value = setting.max;
+		minInput.current.value = setting.min;
 	}, []);
 
 	const onSave = (e) => {
@@ -93,6 +101,7 @@ function Settings() {
 			sub,
 			mul,
 			max,
+			min,
 		};
 
 		localStorage.setItem("setting", JSON.stringify(setting));
@@ -103,6 +112,13 @@ function Settings() {
 		const n = parseInt(maxInput.current.value, 10);
 		if (!isNaN(n) && n >= 5 && n < 100) {
 			setMax(n);
+		}
+	};
+
+	const getMin = () => {
+		const n = parseInt(minInput.current.value, 10);
+		if (!isNaN(n) && n > 0 && n < max) {
+			setMin(n);
 		}
 	};
 
@@ -128,17 +144,17 @@ function Settings() {
 					<Label>Click questions to practice:</Label>
 					<Operators>
 						<Operator
-							title="Addition"
+							title={(add ? "✔" : "") + " Addition"}
 							onClick={() => setAdd(!add)}
 							color={add ? primaryColor : "gray"}
 						/>
 						<Operator
-							title="Subtraction"
+							title={(sub ? "✔" : "") + " Subtraction"}
 							onClick={() => setSub(!sub)}
 							color={sub ? primaryColor : "gray"}
 						/>
 						<Operator
-							title="Multiplication"
+							title={(mul ? "✔" : "") + " Multiplication"}
 							onClick={() => setMul(!mul)}
 							color={mul ? primaryColor : "gray"}
 						/>
@@ -147,13 +163,19 @@ function Settings() {
 						<Label>Max number:</Label>
 						<Input ref={maxInput} onChange={getMax} />
 					</InputContainer>
+					<InputContainer>
+						<Label>Min number:</Label>
+						<Input ref={minInput} onChange={getMin} />
+					</InputContainer>
 				</Top>
 				<Bottom>
 					<Label> Setting:</Label>
 					<Label> {add ? "+" : ""}</Label>
 					<Label> {sub ? "-" : ""}</Label>
-					<Label> {mul ? "x" : ""}</Label>
-					<Label> {max}</Label>
+					<Label> {mul ? "×" : ""}</Label>
+					<Label> ({min}</Label>
+					<Label>to</Label>
+					<Label> {max})</Label>
 				</Bottom>
 			</SettingArea>
 		</Container>
