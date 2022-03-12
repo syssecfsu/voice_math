@@ -80,6 +80,7 @@ function Settings() {
 	const [add, setAdd] = useState(true);
 	const [sub, setSub] = useState(false);
 	const [mul, setMul] = useState(false);
+	const [prompt, setPrompt] = useState(false);
 	const [max, setMax] = useState(10);
 	const [min, setMin] = useState(1);
 
@@ -91,6 +92,7 @@ function Settings() {
 		setMul(setting.mul);
 		setMax(setting.max);
 		setMin(setting.min);
+		setPrompt(setting.prompt);
 		maxInput.current.value = setting.max;
 		minInput.current.value = setting.min;
 	}, []);
@@ -102,6 +104,7 @@ function Settings() {
 			mul,
 			max,
 			min,
+			prompt,
 		};
 
 		localStorage.setItem("setting", JSON.stringify(setting));
@@ -141,22 +144,27 @@ function Settings() {
 			</TopBar>
 			<SettingArea>
 				<Top>
-					<Label>Click questions to practice:</Label>
+					<Label>Practices:</Label>
 					<Operators>
 						<Operator
-							title={(add ? "✔" : "") + " Addition"}
+							title={(add ? "+" : "") + " Addition"}
 							onClick={() => setAdd(!add)}
 							color={add ? primaryColor : "gray"}
 						/>
 						<Operator
-							title={(sub ? "✔" : "") + " Subtraction"}
+							title={(sub ? "-" : "") + " Subtraction"}
 							onClick={() => setSub(!sub)}
 							color={sub ? primaryColor : "gray"}
 						/>
 						<Operator
-							title={(mul ? "✔" : "") + " Multiplication"}
+							title={(mul ? "×" : "") + " Multiplication"}
 							onClick={() => setMul(!mul)}
 							color={mul ? primaryColor : "gray"}
+						/>
+						<Operator
+							title={(prompt ? "☑" : "") + " Show correct/wrong"}
+							onClick={() => setPrompt(!prompt)}
+							color={prompt ? primaryColor : "gray"}
 						/>
 					</Operators>
 					<InputContainer>
@@ -173,6 +181,7 @@ function Settings() {
 					<Label> {add ? "+" : ""}</Label>
 					<Label> {sub ? "-" : ""}</Label>
 					<Label> {mul ? "×" : ""}</Label>
+					<Label> {prompt ? "p" : ""}</Label>
 					<Label> ({min}</Label>
 					<Label>to</Label>
 					<Label> {max})</Label>

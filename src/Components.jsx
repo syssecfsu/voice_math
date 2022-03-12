@@ -46,5 +46,6 @@ export const defaultSetting = {
 	mul: false,
 	max: 9,
 	min: 1,
+	prompt: true,
 };
 export const primaryColor = "#313552";

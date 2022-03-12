@@ -85,6 +85,7 @@ function randInt(min, max) {
 function Main() {
 	const [max, setMax] = useState(10);
 	const [min, setMin] = useState(1);
+	const [prompt, setPrompt] = useState(true);
 	const [num1, setNum1] = useState(0);
 	const [num2, setNum2] = useState(0);
 	const [ops, setOps] = useState([]);
@@ -151,6 +152,7 @@ function Main() {
 		setOps(a);
 		setMax(setting.max);
 		setMin(setting.min);
+		setPrompt(setting.prompt);
 	};
 
 	const newPractice = () => {
@@ -217,17 +219,19 @@ function Main() {
 			setAnswer(i);
 
 			// set the color to give a hint to the answer
-			if (isCorrect(i)) {
-				setColor("green");
-			} else {
-				setColor("red");
+			if (prompt) {
+				if (isCorrect(i)) {
+					setColor("green");
+				} else {
+					setColor("red");
+				}
 			}
 		}
 
 		if (next || pressedKey === "n" || pressedKey === " ") {
 			nextQuestion();
 		}
-	}, [transcript, pressedKey, ticking]);
+	}, [transcript, pressedKey, ticking, prompt, answer]);
 
 	const onClick = () => {
 		// switch listening
