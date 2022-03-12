@@ -144,7 +144,7 @@ function Settings() {
 			</TopBar>
 			<SettingArea>
 				<Top>
-					<Label>Practices:</Label>
+					<Label>Practice Options:</Label>
 					<Operators>
 						<Operator
 							title={(add ? "+" : "") + " Addition"}
@@ -176,7 +176,7 @@ function Settings() {
 						<Input ref={minInput} onChange={getMin} />
 					</InputContainer>
 				</Top>
-				<Bottom>
+				{/* <Bottom>
 					<Label> Setting:</Label>
 					<Label> {add ? "+" : ""}</Label>
 					<Label> {sub ? "-" : ""}</Label>
@@ -185,7 +185,7 @@ function Settings() {
 					<Label> ({min}</Label>
 					<Label>to</Label>
 					<Label> {max})</Label>
-				</Bottom>
+				</Bottom> */}
 			</SettingArea>
 		</Container>
 	);
