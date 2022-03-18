@@ -106,21 +106,20 @@ function Main() {
         const idx = randInt(0, ops.length - 1);
         const p = ops[idx] || "+";
 
-        // avoid negative results
-        if (p === "-") {
-            //skip some very simple cases
-            if (n1 === n2 || n1 === n2 + 1 || n1 === n2 - 1) {
-                return newQuestion();
-            }
-
-            if (n1 < n2) {
-                setNum1(n2);
-                setNum2(n1);
-            } else {
-                setNum1(n1);
-                setNum2(n2);
-            }
+        // avoid some simple cases
+        if (p === "-" && (n1 === n2 || n1 === n2 + 1 || n1 === n2 - 1)) {
+            return newQuestion();
         }
+
+        // avoid negative results
+        if (p === "-" && n1 < n2) {
+            setNum1(n2);
+            setNum2(n1);
+        } else {
+            setNum1(n1);
+            setNum2(n2);
+        }
+
         setOp(p);
         setAnswer("?");
     };
