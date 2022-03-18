@@ -1,292 +1,303 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone, faGear } from "@fortawesome/free-solid-svg-icons";
 import SpeechRecognition, {
-	useSpeechRecognition,
+    useSpeechRecognition,
 } from "react-speech-recognition";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useElapsedTime } from "use-elapsed-time";
 import {
-	Container,
-	TopBar,
-	Left,
-	Right,
-	Button,
-	Title,
-	primaryColor,
-	defaultSetting,
+    Container,
+    TopBar,
+    Left,
+    Right,
+    Button,
+    Title,
+    primaryColor,
+    defaultSetting,
 } from "./Components";
 import { useNavigate } from "react-router-dom";
 
 const Middle = styled.div`
-	color: #313552;
-	flex-grow: 1;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: #c1deae;
+    color: #313552;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #c1deae;
 `;
 
 const Bottom = styled.div`
-	background-color: #f2f5c8;
-	height: 96px;
-	display: flex;
-	align-items: center;
-	justify-content: space-evenly;
+    background-color: #f2f5c8;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 `;
 
 const Equation = styled.h1`
-	font-size: 160px;
-	display: flex;
+    font-size: 160px;
+    display: flex;
 `;
 
 const Answer = styled.h1`
-	font-size: 160px;
-	margin-right: 32px;
-	color: ${(props) => props.color || "#313552"};
+    font-size: 160px;
+    margin-right: 32px;
+    color: ${(props) => props.color || "#313552"};
 `;
 
 const Result = styled.h1`
-	font-size: 64px;
-	color: ${(props) => props.color || "white"};
+    font-size: 64px;
+    color: ${(props) => props.color || "white"};
 `;
 
 const Time = styled.h1`
-	width: 360px;
-	color: #313552;
-	font-size: 64px;
-	display: flex;
+    width: 360px;
+    color: #313552;
+    font-size: 64px;
+    display: flex;
 `;
 
 const TimeComponent = (props) => {
-	const { ticking } = props;
+    const { ticking } = props;
 
-	const { elapsedTime, reset } = useElapsedTime({
-		isPlaying: ticking,
-		updateInterval: 1,
-		startAt: 0,
-	});
+    const { elapsedTime, reset } = useElapsedTime({
+        isPlaying: ticking,
+        updateInterval: 1,
+        startAt: 0,
+    });
 
-	useEffect(() => {
-		if (ticking) {
-			reset();
-		}
-	}, [ticking, reset]);
+    useEffect(() => {
+        if (ticking) {
+            reset();
+        }
+    }, [ticking, reset]);
 
-	return <Time>Time: {elapsedTime}</Time>;
+    return <Time>Time: {elapsedTime}</Time>;
 };
 
 function randInt(min, max) {
-	var stepSize = 1 / (max - min + 1),
-		nSteps = Math.floor(Math.random() / stepSize);
-	return min + nSteps;
+    var stepSize = 1 / (max - min + 1),
+        nSteps = Math.floor(Math.random() / stepSize);
+    return min + nSteps;
 }
 
 function Main() {
-	const [max, setMax] = useState(10);
-	const [min, setMin] = useState(1);
-	const [prompt, setPrompt] = useState(true);
-	const [num1, setNum1] = useState(0);
-	const [num2, setNum2] = useState(0);
-	const [ops, setOps] = useState([]);
-	const [op, setOp] = useState("+");
-	const [answer, setAnswer] = useState("?");
-	const [color, setColor] = useState(primaryColor);
-	const [correct, setCorrect] = useState(0);
-	const [wrong, setWrong] = useState(0);
-	const [ticking, setTicking] = useState(false);
-	const [pressedKey, setPressedKey] = useState("");
-	let navigate = useNavigate();
+    const [max, setMax] = useState(10);
+    const [min, setMin] = useState(1);
+    const [prompt, setPrompt] = useState(true);
+    const [num1, setNum1] = useState(0);
+    const [num2, setNum2] = useState(0);
+    const [ops, setOps] = useState([]);
+    const [op, setOp] = useState("+");
+    const [answer, setAnswer] = useState("?");
+    const [color, setColor] = useState(primaryColor);
+    const [correct, setCorrect] = useState(0);
+    const [wrong, setWrong] = useState(0);
+    const [ticking, setTicking] = useState(false);
+    const [pressedKey, setPressedKey] = useState("");
+    let navigate = useNavigate();
 
-	const newQuestion = () => {
-		let n1 = randInt(min, max);
-		let n2 = randInt(min, max);
+    const newQuestion = () => {
+        let n1 = randInt(min, max);
+        let n2 = randInt(min, max);
 
-		// randomly pick an op
-		const idx = randInt(0, ops.length - 1);
-		const p = ops[idx] || "+";
+        // randomly pick an op
+        const idx = randInt(0, ops.length - 1);
+        const p = ops[idx] || "+";
 
-		// avoid negative results
-		if (p === "-" && n1 < n2) {
-			setNum1(n2);
-			setNum2(n1);
-		} else {
-			setNum1(n1);
-			setNum2(n2);
-		}
-		setOp(p);
-		setAnswer("?");
-	};
+        // avoid negative results
+        if (p === "-") {
+            //skip some very simple cases
+            if (n1 === n2 || n1 === n2 + 1 || n1 === n2 - 1) {
+                return newQuestion();
+            }
 
-	const isCorrect = (i) => {
-		return (
-			(op === "+" && i === num1 + num2) ||
-			(op === "-" && i === num1 - num2) ||
-			(op === "×" && i === num1 * num2)
-		);
-	};
+            if (n1 < n2) {
+                setNum1(n2);
+                setNum2(n1);
+            } else {
+                setNum1(n1);
+                setNum2(n2);
+            }
+        }
+        setOp(p);
+        setAnswer("?");
+    };
 
-	const nextQuestion = () => {
-		if (isCorrect(answer)) {
-			setCorrect(correct + 1);
-		} else {
-			setWrong(wrong + 1);
-		}
+    const isCorrect = (i) => {
+        return (
+            (op === "+" && i === num1 + num2) ||
+            (op === "-" && i === num1 - num2) ||
+            (op === "×" && i === num1 * num2)
+        );
+    };
 
-		setColor(primaryColor);
-		resetTranscript();
-		setPressedKey("");
-		newQuestion();
-	};
+    const nextQuestion = () => {
+        if (isCorrect(answer)) {
+            setCorrect(correct + 1);
+        } else {
+            setWrong(wrong + 1);
+        }
 
-	const readSetting = () => {
-		const saved = localStorage.getItem("setting");
-		let setting = JSON.parse(saved) || defaultSetting;
+        setColor(primaryColor);
+        resetTranscript();
+        setPressedKey("");
+        newQuestion();
+    };
 
-		let a = [];
-		setting.add && a.push("+");
-		setting.sub && a.push("-");
-		setting.mul && a.push("×");
-		a.length === 0 && a.push("+");
+    const readSetting = () => {
+        const saved = localStorage.getItem("setting");
+        let setting = JSON.parse(saved) || defaultSetting;
+        console.log(saved, setting);
 
-		setOps(a);
-		setMax(setting.max);
-		setMin(setting.min);
-		setPrompt(setting.prompt);
-	};
+        let a = [];
+        setting.add && a.push("+");
+        setting.sub && a.push("-");
+        setting.mul && a.push("×");
+        a.length === 0 && a.push("+");
 
-	const newPractice = () => {
-		setCorrect(0);
-		setWrong(0);
-		setColor(primaryColor);
-		resetTranscript();
-		setPressedKey("");
-		readSetting();
-		newQuestion();
-	};
+        setOps(a);
+        setMax(setting.max);
+        setMin(setting.min);
+        setPrompt(setting.prompt);
+    };
 
-	const Question = () => {
-		return (
-			<>
-				<Equation>
-					{num1} {op} {num2} =
-				</Equation>
-				<Answer color={color}>{answer}</Answer>
-			</>
-		);
-	};
+    const newPractice = () => {
+        setCorrect(0);
+        setWrong(0);
+        setColor(primaryColor);
+        resetTranscript();
+        setPressedKey("");
+        newQuestion();
+    };
 
-	const { transcript, resetTranscript } = useSpeechRecognition();
+    const Question = () => {
+        return (
+            <>
+                <Equation>
+                    {num1} {op} {num2} =
+                </Equation>
+                <Answer color={color}>{answer}</Answer>
+            </>
+        );
+    };
 
-	useEffect(() => {
-		const onKeyDown = (e) => {
-			setPressedKey(e.key);
-		};
+    const { transcript, resetTranscript } = useSpeechRecognition();
 
-		// add event listener
-		window.addEventListener("keydown", onKeyDown);
+    useEffect(() => {
+        readSetting();
 
-		// Remove event listeners on cleanup
-		return () => {
-			window.removeEventListener("keydown", onKeyDown);
-		};
-	}, []);
+        const onKeyDown = (e) => {
+            setPressedKey(e.key);
+        };
 
-	useEffect(() => {
-		if (!ticking) {
-			return;
-		}
+        // add event listener
+        window.addEventListener("keydown", onKeyDown);
 
-		// resetTranscript should only be called after recognizing the next
-		// command otherwise the speech recognition won't work properly.
-		// As such, we just find the last number in the sequence as answer.
-		console.log(transcript);
+        // Remove event listeners on cleanup
+        return () => {
+            window.removeEventListener("keydown", onKeyDown);
+        };
+    }, []);
 
-		const tokens = transcript.split(" ");
+    useEffect(() => {
+        if (!ticking) {
+            return;
+        }
 
-		let i = NaN;
-		let next = false;
+        // resetTranscript should only be called after recognizing the next
+        // command otherwise the speech recognition won't work properly.
+        // As such, we just find the last number in the sequence as answer.
+        console.log(transcript);
 
-		tokens.forEach((val) => {
-			i = parseInt(val, 10) || i;
+        const tokens = transcript.split(" ");
 
-			if (val === "next") {
-				next = true;
-			}
-		});
+        let i = NaN;
+        let next = false;
 
-		if (!isNaN(i) && !isCorrect(answer)) {
-			setAnswer(i);
+        tokens.forEach((val) => {
+            i = parseInt(val, 10) || i;
 
-			// set the color to give a hint to the answer
-			if (prompt) {
-				if (isCorrect(i)) {
-					setColor("green");
-				} else {
-					setColor("red");
-				}
-			}
-		}
+            if (val === "next") {
+                next = true;
+            }
+        });
 
-		if (next || pressedKey === "n" || pressedKey === " ") {
-			nextQuestion();
-		}
-	}, [transcript, pressedKey, ticking, prompt, answer]);
+        if (!isNaN(i) && !isCorrect(answer)) {
+            setAnswer(i);
 
-	const onClick = () => {
-		// switch listening
-		if (ticking) {
-			SpeechRecognition.stopListening();
-		} else {
-			SpeechRecognition.startListening({ continuous: true });
-			newPractice();
-		}
+            // set the color to give a hint to the answer
+            if (prompt) {
+                if (isCorrect(i)) {
+                    setColor("green");
+                } else {
+                    setColor("red");
+                }
+            }
+        }
 
-		setTicking(!ticking);
-	};
+        if (next || pressedKey === "n" || pressedKey === " ") {
+            nextQuestion();
+        }
+    }, [transcript, pressedKey, ticking, prompt, answer]);
 
-	const onClickSetting = () => {
-		SpeechRecognition.stopListening();
-		navigate("/settings");
-	};
+    const onClick = () => {
+        // switch listening
+        if (ticking) {
+            SpeechRecognition.stopListening();
+        } else {
+            SpeechRecognition.startListening({
+                continuous: true,
+            });
+            newPractice();
+        }
 
-	return (
-		<Container>
-			<TopBar>
-				<Left>
-					<Title>Speed Math</Title>
-				</Left>
+        setTicking(!ticking);
+    };
 
-				<Right>
-					<Button
-						color={ticking ? primaryColor : "grey"}
-						onClick={onClick}
-						onKeyDown={(e) => e.preventDefault()}
-					>
-						<FontAwesomeIcon icon={faMicrophone} size="4x" />
-					</Button>
+    const onClickSetting = () => {
+        SpeechRecognition.stopListening();
+        navigate("/settings");
+    };
 
-					<Button
-						color={primaryColor}
-						onClick={onClickSetting}
-						onKeyDown={(e) => e.preventDefault()}
-					>
-						<FontAwesomeIcon icon={faGear} size="4x" />
-					</Button>
-				</Right>
-			</TopBar>
+    return (
+        <Container>
+            <TopBar>
+                <Left>
+                    <Title>Speed Math</Title>
+                </Left>
 
-			<Middle>
-				{ticking ? <Question /> : <Equation>Ready?</Equation>}
-			</Middle>
+                <Right>
+                    <Button
+                        color={ticking ? primaryColor : "grey"}
+                        onClick={onClick}
+                        onKeyDown={(e) => e.preventDefault()}
+                    >
+                        <FontAwesomeIcon icon={faMicrophone} size="4x" />
+                    </Button>
 
-			<Bottom>
-				<Result color="green">{correct}</Result>
-				<Result color="red">{wrong}</Result>
-				<TimeComponent ticking={ticking} />
-			</Bottom>
-		</Container>
-	);
+                    <Button
+                        color={primaryColor}
+                        onClick={onClickSetting}
+                        onKeyDown={(e) => e.preventDefault()}
+                    >
+                        <FontAwesomeIcon icon={faGear} size="4x" />
+                    </Button>
+                </Right>
+            </TopBar>
+
+            <Middle>
+                {ticking ? <Question /> : <Equation>Ready?</Equation>}
+            </Middle>
+
+            <Bottom>
+                <Result color="green">{correct}</Result>
+                <Result color="red">{wrong}</Result>
+                <TimeComponent ticking={ticking} />
+            </Bottom>
+        </Container>
+    );
 }
 
 export default Main;
