@@ -28,33 +28,34 @@ const Middle = styled.div`
 `;
 
 const Bottom = styled.div`
-	background-color: #f2f5c8;
-	height: 96px;
+	background-color: #c1deae;
+	height: 6em;
 	display: flex;
 	align-items: center;
 	justify-content: space-evenly;
 `;
 
 const Equation = styled.h1`
-	font-size: 160px;
+	font-size: 10em;
 	display: flex;
 `;
 
 const Answer = styled.h1`
-	font-size: 160px;
-	margin-right: 32px;
+	font-size: 10em;
+	width: 2em;
 	color: ${(props) => props.color || "#313552"};
 `;
 
 const Result = styled.h1`
-	font-size: 64px;
+	width: 3em;
+	font-size: 4.5em;
 	color: ${(props) => props.color || "white"};
 `;
 
 const Time = styled.h1`
-	width: 360px;
+	width: 6em;
 	color: #313552;
-	font-size: 64px;
+	font-size: 4.5em;
 	display: flex;
 `;
 

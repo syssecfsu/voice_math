@@ -7,7 +7,7 @@ export const Container = styled.div`
 `;
 
 export const TopBar = styled.div`
-	height: 96px;
+	height: 6em;
 	background-color: #219f94;
 	display: flex;
 	align-items: center;
@@ -15,7 +15,9 @@ export const TopBar = styled.div`
 `;
 
 export const Title = styled.h1`
-	font-size: 64px;
+	font-size: 4em;
+	color: #313552;
+	margin-left: 2em;
 	/* color: white; */
 `;
 
