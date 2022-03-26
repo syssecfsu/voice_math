@@ -17,7 +17,7 @@ export const TopBar = styled.div`
 export const Title = styled.h1`
 	font-size: 4em;
 	color: #313552;
-	margin-left: 2em;
+	margin-left: 3.5em;
 	/* color: white; */
 `;
 
@@ -31,6 +31,9 @@ export const Left = styled.div`
 
 export const Right = styled.div`
 	margin-right: 24px;
+	width: 11em;
+	display: flex;
+	justify-content: end;
 `;
 
 export const Button = styled.button`

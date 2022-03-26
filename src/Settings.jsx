@@ -76,6 +76,10 @@ const Top = styled.div`
 	justify-content: center;
 `;
 
+const Bottom = styled.div`
+	height: 6em;
+`;
+
 function Settings() {
 	let navigate = useNavigate();
 	const maxInput = useRef(null);
@@ -179,16 +183,8 @@ function Settings() {
 						<Input ref={minInput} onChange={getMin} />
 					</InputContainer>
 				</Top>
-				{/* <Bottom>
-					<Label> Setting:</Label>
-					<Label> {add ? "+" : ""}</Label>
-					<Label> {sub ? "-" : ""}</Label>
-					<Label> {mul ? "×" : ""}</Label>
-					<Label> {prompt ? "p" : ""}</Label>
-					<Label> ({min}</Label>
-					<Label>to</Label>
-					<Label> {max})</Label>
-				</Bottom> */}
+				{/* add an empty div to push content up a bit */}
+				<Bottom />
 			</SettingArea>
 		</Container>
 	);
